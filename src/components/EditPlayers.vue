@@ -1,105 +1,41 @@
 <template>
-  <h1>Редактирование игроков</h1>
+    <PlayerEditItem
+        v-for="item in playersList"
+        :key="item.id"
+        :item="item"
+        @add-life="$emit('add-life', $event)"
+        @subtract-life="$emit('subtract-life', $event)"
+        @change-name="$emit('change-name', item.id, $event)"
+    />
 
-  <div
-    v-for="item in usersLife"
-    :key="item.name"
-    class="row"
-  >
-      <input id="name" v-model="item.name">
-      <a class="button" href="#" @click.prevent="minusLife(item)">-</a>
-      <span class="lifeCount">{{item.life}}</span>
-      <a class="button" href="#" @click.prevent="plusLife(item)">+</a>
-  </div>
-  
-  <h2>Рейтинг</h2>
-  <table>
-    <tr
-    v-for="(item, index) in rating"
-    :key="index"
-    >
-    <td v-text="`${index + 1}`"></td>
-    <td v-text="`У игрока <b>${item.name}</b> ${item.life} жизней`"></td>
-  </tr>
-  </table>
+    <PlayersRatings :players-list="playersList"/>
 </template>
 
 <script>
+import PlayerEditItem from './PlayerEditItem.vue';
+import PlayersRatings from './PlayersRatings.vue';
+
 export default {
-  name: 'LifeCounter',
+    name: 'LifeCounter',
 
-  props: {
-    playersList: {
-      type: Array
-    },
-  },
-  
-  data () {
-    return {
-    };
-  },
-  
-  created() {
-    for (let i = 0; i < this.playersList; i++) {
-      this.usersLife.push({
-        name: this.playersList.name,
-        life: this.playersList.life
-      });
-    }
-  },
-  
-  computed: {
-    usersLife () {
-      return [...this.playersList]
-    },
-    rating () {
-      let places = this.usersLife;
-  
-      places.sort((a, b) => b.life - a.life);
-     
-      return places;
-    }
-  },
-  
-  methods: {
-    plusLife (item) {
-      item.life++;
+    components: {
+        PlayerEditItem,
+        PlayersRatings,
     },
 
-    minusLife (item) {
-      item.life--;
-    }
-  },
+    props: {
+        playersList: {
+            type: Array,
+            default: () => [],
+        },
+    },
+
+    computed: {
+        rating() {
+            const places = [...this.playersList];
+            
+            return places.sort((a, b) => b.life - a.life);
+        }
+    },
 }
 </script>
-
-<style lang="scss">
-    .row {
-        display: flex;
-        align-items: center;
-        margin-top: 20px;
-
-        input {
-            margin-right: 12px;
-            width: 100%;
-            height: 24px;
-        }
-
-        .button {
-          width: 24px;
-          height: 24px;
-        }
-
-        .life {
-          margin: 0 12px;
-        }
-    }
-
-    table {
-      width: 100%;
-
-      td {
-        border: 1px solid #2c3e50;
-      }
-    }
-</style>

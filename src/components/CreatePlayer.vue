@@ -1,9 +1,8 @@
 <template>
-    <h1>Добавить нового игрока</h1>
     <div class="row">
-        <input id="name" type="text" v-model="players_name" placeholder="Имя"/>
-        <input id="life" type="number" v-model="players_life" placeholder="Жизней" />
-        <button type="button" v-on:click="createPlayer">Создать</button>
+        <input id="name" type="text" v-model="playerName" placeholder="Имя"/>
+        <input id="life" type="number" v-model="playerLife" placeholder="Жизней" min="1" />
+        <button type="button" @click="createPlayer">Создать</button>
     </div>
 </template>
 
@@ -14,39 +13,36 @@ export default {
   
   data () {
     return {
-      players: [],
-      players_name: '',
-      players_life: ''
+      playerName: '',
+      playerLife: ''
     };
   },
   
   methods: {
     createPlayer() {
-
-        if(this.players_name === '' || this.players_name === undefined) {
+        if(!this.playerName) {
             alert('Укажите имя');
             return;
         }
 
-        if(this.players_life === '' || this.players_life === undefined) {
+        if(!this.playerLife) {
             alert('Укажите количество жизней');
             return;
         }
 
-        if(this.players_life <= 0) {
-            alert('Значение не может быть больше нуля');
+        if(this.playerLife <= 0) {
+            alert('Значение не может быть меньше нуля');
             return;
         }
 
-        this.players.push({
-            'name': this.players_name,
-            'life': this.players_life,
-        })
-
-        this.players_name = '';
-        this.players_life = '';
-
-        this.$emit('players-list', this.players);
+        this.$emit('add-player', {
+            id: Date.now().toString(36) + Math.random().toString(36).slice(2),
+            name: this.playerName,
+            life: this.playerLife,
+        });
+        
+        this.playerName = '';
+        this.playerLife = '';
     }
   },
 }
